@@ -1,0 +1,43 @@
+{
+  "name": "@wayfound/console",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p .",
+    "deploy": "CLOUDFLARE_ENV=production VITE_PUBLIC_ORIGIN=https://go.wayfound.shab.boo VITE_SITE_ORIGIN=https://wayfound.shab.boo vite build && wrangler deploy"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "6.3.1",
+    "@dnd-kit/sortable": "10.0.0",
+    "@dnd-kit/utilities": "3.2.2",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/inter": "5.3.0",
+    "@tanstack/react-query": "5.104.5",
+    "@tanstack/react-router": "1.170.46",
+    "@wayfound/core": "workspace:*",
+    "@wayfound/i18n": "workspace:*",
+    "@wayfound/ui": "workspace:*",
+    "clsx": "2.1.1",
+    "lucide-react": "1.61.0",
+    "pdf-lib": "1.17.1",
+    "qrcode": "1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.65.0",
+    "@cloudflare/workers-types": "5.20261023.1",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "tailwindcss": "4.3.3",
+    "vite": "8.3.5",
+    "wrangler": "4.152.0"
+  }
+}

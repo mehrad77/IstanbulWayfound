@@ -1,0 +1,45 @@
+---
+import { BRAND, whatsappUrl } from "@wayfound/core";
+import { nav } from "../lib/copy.ts";
+import type { SiteLocale } from "../lib/env.ts";
+import { services } from "../lib/services.ts";
+import { industries } from "../lib/industries.ts";
+
+interface Props {
+  lang: SiteLocale;
+}
+const { lang } = Astro.props;
+const hello = lang === "tr" ? "Merhaba Wayfound, işletmem için bilgi almak istiyorum." : "Hi Wayfound, I'd like to know more for my business.";
+---
+<footer class="mt-24 border-t border-line bg-white">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <p class="font-serif text-xl font-semibold text-cobalt-900">{BRAND.name}</p>
+      <p class="mt-2 text-sm text-ink-soft">{BRAND.tagline[lang]}</p>
+      <p class="mt-3 text-sm text-ink-soft">İstanbul · English · Türkçe</p>
+    </div>
+    <div>
+      <p class="text-sm font-semibold text-ink">{nav.services[lang]}</p>
+      <ul class="mt-2 grid gap-1 text-sm">
+        {services.map((s) => <li><a class="text-ink-soft hover:text-ink" href={`/${lang}/services/${s.slug}/`}>{s.title[lang]}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-semibold text-ink">{nav.industries[lang]}</p>
+      <ul class="mt-2 grid gap-1 text-sm">
+        {industries.map((i) => <li><a class="text-ink-soft hover:text-ink" href={`/${lang}/industries/${i.slug}/`}>{i.title[lang]}</a></li>)}
+        <li><a class="text-ink-soft hover:text-ink" href={`/${lang}/live-demos/`}>{nav.demos[lang]}</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-semibold text-ink">{nav.about[lang]}</p>
+      <ul class="mt-2 grid gap-1 text-sm">
+        <li><a class="text-ink-soft hover:text-ink" href={whatsappUrl(BRAND.whatsapp, hello)}>WhatsApp</a></li>
+        <li><a class="text-ink-soft hover:text-ink" href={`mailto:${BRAND.email}`}>{BRAND.email}</a></li>
+        <li><a class="text-ink-soft hover:text-ink" href={BRAND.bookingUrl}>{nav.book[lang]}</a></li>
+        <li><a class="text-ink-soft hover:text-ink" href="/llms.txt">llms.txt</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="border-t border-line py-4 text-center text-xs text-ink-soft">© 2026 {BRAND.name} · {lang === "tr" ? "Demo sürümü" : "Demo build"}</p>
+</footer>

@@ -1,0 +1,22 @@
+---
+import { BRAND } from "@wayfound/core";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{BRAND.name}</title>
+    <link rel="canonical" href="/en/" />
+    <link rel="alternate" hreflang="en" href="/en/" />
+    <link rel="alternate" hreflang="tr" href="/tr/" />
+    <link rel="alternate" hreflang="x-default" href="/en/" />
+    <script is:inline>
+      location.replace((navigator.language || "").toLowerCase().startsWith("tr") ? "/tr/" : "/en/");
+    </script>
+  </head>
+  <body style="font-family: system-ui; padding: 2rem">
+    <h1>{BRAND.name}</h1>
+    <p><a href="/en/">English</a> · <a href="/tr/" lang="tr">Türkçe</a></p>
+  </body>
+</html>

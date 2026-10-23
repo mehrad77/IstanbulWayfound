@@ -1,0 +1,44 @@
+---
+import { BRAND } from "@wayfound/core";
+import { nav } from "../lib/copy.ts";
+import type { SiteLocale } from "../lib/env.ts";
+
+interface Props {
+  lang: SiteLocale;
+  path: string;
+}
+const { lang, path } = Astro.props;
+const other: SiteLocale = lang === "en" ? "tr" : "en";
+const links = [
+  { href: `/${lang}/services/`, label: nav.services[lang] },
+  { href: `/${lang}/industries/`, label: nav.industries[lang] },
+  { href: `/${lang}/how-we-work/`, label: nav.how[lang] },
+  { href: `/${lang}/live-demos/`, label: nav.demos[lang] },
+  { href: `/${lang}/about/`, label: nav.about[lang] },
+];
+const current = Astro.url.pathname;
+---
+<header class="sticky top-0 z-20 border-b border-line/70 bg-paper/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+    <a href={`/${lang}/`} class="flex items-center gap-2" aria-label={`${BRAND.name} home`}>
+      <span class="flex size-8 items-center justify-center rounded-lg bg-cobalt-700 font-serif text-lg font-bold text-white">W</span>
+      <span class="font-serif text-xl font-semibold text-cobalt-900">{BRAND.name}</span>
+    </a>
+    <nav class="ms-6 hidden items-center gap-5 text-sm font-medium lg:flex" aria-label="Main">
+      {links.map((l) => (
+        <a href={l.href} class:list={["text-ink-soft hover:text-ink", current.startsWith(l.href) && "text-cobalt-800"]} aria-current={current.startsWith(l.href) ? "page" : undefined}>{l.label}</a>
+      ))}
+    </nav>
+    <div class="ms-auto flex items-center gap-2">
+      <a href={`/${other}${path}`} hreflang={other} lang={other} class="rounded-full border border-line bg-white px-3 py-1 text-sm font-semibold text-ink-soft hover:text-ink">{other.toUpperCase()}</a>
+      <a href={`/${lang}/audit/`} class="btn-primary hidden px-4 py-2 text-sm sm:inline-flex">{nav.audit[lang]}</a>
+      <details class="relative lg:hidden">
+        <summary class="cursor-pointer list-none rounded-lg border border-line bg-white px-3 py-1.5 text-sm font-semibold">Menu</summary>
+        <div class="card absolute end-0 mt-2 grid w-64 gap-1 p-2">
+          {links.map((l) => <a href={l.href} class="rounded-lg px-3 py-2 text-sm hover:bg-paper-deep">{l.label}</a>)}
+          <a href={`/${lang}/audit/`} class="btn-primary mt-1 py-2 text-sm">{nav.audit[lang]}</a>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>

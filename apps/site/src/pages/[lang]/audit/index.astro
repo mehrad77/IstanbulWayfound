@@ -1,0 +1,24 @@
+---
+import Base from "../../../layouts/Base.astro";
+import AuditApp from "../../../components/AuditApp.tsx";
+import { API_URL, localePaths, type SiteLocale } from "../../../lib/env.ts";
+
+export const getStaticPaths = localePaths;
+const lang = Astro.params.lang as SiteLocale;
+const title = lang === "tr" ? "Ücretsiz Yapay Zekâ Görünürlük Denetimi" : "Free AI Visibility Audit";
+const description =
+  lang === "tr"
+    ? "Turistler yapay zekâya bölgenizdeki işletmeleri sorduğunda işletmenizin yanıtta yer alıp almadığını ve neyin değişmesi gerektiğini görün."
+    : "See whether AI engines mention your business when tourists ask about your area, who they recommend instead, and what would change that.";
+---
+<Base lang={lang} title={title} description={description} path="/audit/" crumbs={[{ name: title, path: "/audit/" }]}>
+  <section class="mx-auto max-w-5xl px-4 pt-14">
+    <p class="eyebrow">Wayfound Audit</p>
+    <h1 class="mt-2 font-serif text-4xl font-semibold text-cobalt-900">{title}</h1>
+    <p class="mt-3 max-w-3xl text-lg text-ink-soft">{description}</p>
+  </section>
+  <section class="mx-auto mt-8 max-w-5xl px-4">
+    <AuditApp client:load lang={lang} apiUrl={API_URL} />
+    <noscript><p class="card p-6 text-ink-soft">{lang === "tr" ? "Denetim için JavaScript gerekir." : "The audit needs JavaScript."}</p></noscript>
+  </section>
+</Base>

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/fraunces";
+@import "../../../packages/ui/theme.css";
+
+@utility card {
+  @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-card)];
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition-colors;
+}
+@utility btn-primary {
+  @apply btn bg-terracotta-500 text-white hover:bg-terracotta-600;
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-white text-ink hover:bg-paper-deep;
+}
+@utility field {
+  @apply w-full rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink placeholder:text-ink-soft/60 focus:border-cobalt-500 focus:ring-2 focus:ring-cobalt-100 focus:outline-none;
+}
+@utility eyebrow {
+  @apply text-sm font-semibold tracking-wide text-terracotta-600 uppercase;
+}
+@utility prose-answer {
+  @apply text-ink-soft leading-relaxed;
+}
+summary::-webkit-details-marker {
+  display: none;
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@wayfound/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./seed": "./src/seed/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "generate": "drizzle-kit generate",
+    "seed:sql": "tsx scripts/seed-sql.ts"
+  },
+  "dependencies": {
+    "@wayfound/core": "workspace:*",
+    "@wayfound/i18n": "workspace:*",
+    "drizzle-orm": "0.45.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.11",
+    "@cloudflare/workers-types": "5.20261023.1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "wayfound-site",
+  "compatibility_date": "2026-10-01",
+  // Static only: every page is pre-rendered HTML, so crawlers see all content and schema.
+  "assets": { "directory": "./dist", "not_found_handling": "404-page" },
+  "env": {
+    "production": {
+      "name": "wayfound-site",
+      "routes": [{ "pattern": "wayfound.shab.boo", "custom_domain": true }]
+    }
+  }
+}

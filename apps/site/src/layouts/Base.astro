@@ -1,0 +1,57 @@
+---
+import "../styles.css";
+import { BRAND } from "@wayfound/core";
+import { agencyOrganization, breadcrumbs, graph, toScriptJson } from "@wayfound/schema";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import type { SiteLocale } from "../lib/env.ts";
+
+interface Props {
+  lang: SiteLocale;
+  title: string;
+  description: string;
+  /** Path without the language prefix, e.g. "/services/geo/". */
+  path: string;
+  jsonLd?: Record<string, unknown>[];
+  crumbs?: { name: string; path: string }[];
+}
+
+const { lang, title, description, path, jsonLd = [], crumbs } = Astro.props;
+const site = (Astro.site?.toString() ?? "http://localhost:4321/").replace(/\/$/, "");
+const url = (l: SiteLocale) => `${site}/${l}${path}`;
+const fullTitle = path === "/" ? `${BRAND.name} · ${title}` : `${title} · ${BRAND.name}`;
+const nodes = [
+  ...agencyOrganization(site, lang),
+  ...jsonLd,
+  ...(crumbs ? [breadcrumbs([{ name: BRAND.name, url: `${site}/${lang}/` }, ...crumbs.map((c) => ({ name: c.name, url: `${site}/${lang}${c.path}` }))])] : []),
+];
+---
+<!doctype html>
+<html lang={lang} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1f3f8f" />
+    <link rel="canonical" href={url(lang)} />
+    <link rel="alternate" hreflang="en" href={url("en")} />
+    <link rel="alternate" hreflang="tr" href={url("tr")} />
+    <link rel="alternate" hreflang="x-default" href={url("en")} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f3f8f'/%3E%3Cpath d='M8 10l4 12 4-9 4 9 4-12' stroke='%23fff' stroke-width='2.5' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url(lang)} />
+    <meta property="og:locale" content={lang === "tr" ? "tr_TR" : "en_GB"} />
+    <script type="application/ld+json" set:html={toScriptJson(graph(...nodes))} />
+  </head>
+  <body class="min-h-dvh bg-paper text-ink antialiased">
+    <Header lang={lang} path={path} />
+    <main>
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

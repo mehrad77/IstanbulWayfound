@@ -1,0 +1,23 @@
+---
+import { BRAND, whatsappUrl } from "@wayfound/core";
+import Base from "../../layouts/Base.astro";
+import { about, nav } from "../../lib/copy.ts";
+import { localePaths, type SiteLocale } from "../../lib/env.ts";
+
+export const getStaticPaths = localePaths;
+const lang = Astro.params.lang as SiteLocale;
+const hello = lang === "tr" ? "Merhaba Wayfound, işletmem için görüşmek istiyorum." : "Hi Wayfound, I'd like to talk about my business.";
+---
+<Base lang={lang} title={about.title[lang]} description={about.lead[lang]} path="/about/" crumbs={[{ name: about.title[lang], path: "/about/" }]}>
+  <section class="mx-auto max-w-3xl px-4 pt-14">
+    <h1 class="font-serif text-4xl font-semibold text-cobalt-900">{about.title[lang]}</h1>
+    <p class="mt-4 text-lg text-ink">{about.lead[lang]}</p>
+    <div class="mt-8 grid gap-3 sm:grid-cols-3">
+      <a class="btn-primary" href={whatsappUrl(BRAND.whatsapp, hello)}>WhatsApp</a>
+      <a class="btn-secondary" href={`mailto:${BRAND.email}`}>Email</a>
+      <a class="btn-secondary" href={BRAND.bookingUrl}>{nav.book[lang]}</a>
+    </div>
+    <p class="mt-6 text-sm text-ink-soft">{about.pricing[lang]}</p>
+    <p class="mt-2 text-xs text-ink-soft">{lang === "tr" ? "Demo: iletişim bilgileri yer tutucudur." : "Demo: contact details are placeholders."}</p>
+  </section>
+</Base>

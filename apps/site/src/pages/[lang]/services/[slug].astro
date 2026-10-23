@@ -1,0 +1,47 @@
+---
+import { agencyService } from "@wayfound/schema";
+import Base from "../../../layouts/Base.astro";
+import FaqList from "../../../components/FaqList.astro";
+import AuditStartForm from "../../../components/AuditStartForm.astro";
+import { nav } from "../../../lib/copy.ts";
+import { LOCALES, resolveHref, type SiteLocale } from "../../../lib/env.ts";
+import { faqNode } from "../../../lib/faq-schema.ts";
+import { MODE_LABEL, services } from "../../../lib/services.ts";
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((lang) => services.map((s) => ({ params: { lang, slug: s.slug } })));
+}
+const lang = Astro.params.lang as SiteLocale;
+const service = services.find((s) => s.slug === Astro.params.slug)!;
+const site = (Astro.site?.toString() ?? "").replace(/\/$/, "");
+const pageUrl = `${site}/${lang}/services/${service.slug}/`;
+const nodes = [agencyService(site, pageUrl, service.pillar, service.description, lang), faqNode(service.faqs, lang, pageUrl)!];
+---
+<Base lang={lang} title={service.title[lang]} description={service.description[lang]} path={`/services/${service.slug}/`} jsonLd={nodes} crumbs={[{ name: nav.services[lang], path: "/services/" }, { name: service.title[lang], path: `/services/${service.slug}/` }]}>
+  <section class="mx-auto max-w-5xl px-4 pt-14">
+    <p class="eyebrow">{lang === "tr" ? "Hizmet alanı" : "Pillar"} {service.pillar}</p>
+    <h1 class="mt-2 font-serif text-4xl font-semibold text-cobalt-900">{service.title[lang]}</h1>
+    <p class="mt-4 max-w-3xl text-xl text-ink">{service.lead[lang]}</p>
+    <p class="mt-3 max-w-3xl text-ink-soft">{service.description[lang]}</p>
+  </section>
+  <section class="mx-auto mt-10 max-w-5xl px-4">
+    <h2 class="font-serif text-2xl font-semibold text-cobalt-900">{lang === "tr" ? "Neler teslim ediyoruz" : "What we deliver"}</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-2">
+      {service.modules.map((m) => (
+        <div class="card p-6">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="font-semibold text-ink">{m.name[lang]}</h3>
+            <span class:list={["shrink-0 rounded-md px-2 py-0.5 text-xs font-medium", m.mode === "onsite" ? "bg-terracotta-100 text-terracotta-700" : m.mode === "vendor" ? "bg-warn-soft text-warn" : "bg-cobalt-50 text-cobalt-700"]}>{MODE_LABEL[m.mode][lang]}</span>
+          </div>
+          <p class="mt-2 text-sm text-ink-soft">{m.delivered[lang]}</p>
+          {m.demo ? <a class="mt-3 inline-block text-sm font-semibold text-terracotta-600" href={resolveHref(m.demo.href, lang)}>{m.demo.label[lang]} →</a> : null}
+        </div>
+      ))}
+    </div>
+  </section>
+  <div class="mt-14"><FaqList faqs={service.faqs} lang={lang} title={lang === "tr" ? "Sorular" : "Questions"} /></div>
+  <section class="mx-auto mt-14 max-w-2xl px-4">
+    <h2 class="mb-3 font-serif text-2xl font-semibold text-cobalt-900">{lang === "tr" ? "Nereden başlayacağınızı görün" : "See where to start"}</h2>
+    <AuditStartForm lang={lang} />
+  </section>
+</Base>
