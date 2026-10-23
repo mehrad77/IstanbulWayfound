@@ -1,0 +1,28 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "wayfound-public",
+  "main": "src/index.tsx",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "assets": { "directory": "./assets", "binding": "ASSETS" },
+  "services": [{ "binding": "API", "service": "wayfound-api" }],
+  "vars": {
+    "PUBLIC_ORIGIN": "http://localhost:8791",
+    "SITE_ORIGIN": "http://localhost:4321",
+    // Set to the founder's own number during a pitch so demo WhatsApp buttons reach a real phone.
+    "DEMO_WHATSAPP_OVERRIDE": ""
+  },
+  "env": {
+    "production": {
+      "name": "wayfound-public",
+      "routes": [{ "pattern": "go.wayfound.shab.boo", "custom_domain": true }],
+      "services": [{ "binding": "API", "service": "wayfound-api" }],
+      "vars": {
+        "PUBLIC_ORIGIN": "https://go.wayfound.shab.boo",
+        "SITE_ORIGIN": "https://wayfound.shab.boo",
+        "DEMO_WHATSAPP_OVERRIDE": ""
+      }
+    }
+  }
+}

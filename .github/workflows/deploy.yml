@@ -1,0 +1,109 @@
+name: CI and deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      reset_demo:
+        description: "Wipe and reseed the production demo database"
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Typecheck, lint, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - name: Build every app
+        run: pnpm build
+
+  deploy:
+    name: Deploy to wayfound.shab.boo
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://wayfound.shab.boo
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || 'bc2cdffbdad34ab730d8a264f29e74e9' }}
+      AGENCY_DEMO_CODE: ${{ secrets.AGENCY_DEMO_CODE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Check the Cloudflare token is set
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Add a CLOUDFLARE_API_TOKEN repository secret (see README → Deploy)."
+            exit 1
+          fi
+
+      - name: Apply D1 migrations
+        working-directory: apps/api
+        run: pnpm exec wrangler d1 migrations apply wayfound --remote --env production
+
+      - name: Seed the demo data (first deploy only)
+        if: ${{ !inputs.reset_demo }}
+        run: node scripts/seed-remote-if-empty.mjs
+
+      - name: Reset the demo data (manual run only)
+        if: ${{ inputs.reset_demo }}
+        run: node scripts/demo-reset.mjs --remote --env production --yes
+
+      # The API goes first: the visitor pages and console bind to it.
+      - name: Deploy API
+        run: pnpm --filter @wayfound/api run deploy
+
+      - name: Set the agency passcode
+        if: ${{ env.AGENCY_DEMO_CODE != '' }}
+        working-directory: apps/api
+        run: printf '%s' "$AGENCY_DEMO_CODE" | pnpm exec wrangler secret put AGENCY_DEMO_CODE --env production
+
+      - name: Deploy visitor pages
+        run: pnpm --filter @wayfound/public run deploy
+
+      - name: Deploy console
+        run: pnpm --filter @wayfound/console run deploy
+
+      - name: Deploy marketing site
+        run: pnpm --filter @wayfound/site run deploy
+
+      - name: Smoke test
+        run: |
+          set -e
+          for url in \
+            https://api.wayfound.shab.boo/api/health \
+            https://go.wayfound.shab.boo/m/cafe-lale \
+            https://app.wayfound.shab.boo/api/auth/demo-accounts \
+            https://wayfound.shab.boo/en/ ; do
+            for i in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" "$url" || true)
+              [ "$code" = "200" ] && break
+              sleep 10
+            done
+            echo "$code $url"
+            [ "$code" = "200" ]
+          done

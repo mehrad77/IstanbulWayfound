@@ -1,0 +1,49 @@
+---
+import Base from "../../layouts/Base.astro";
+import { how, models, tiers } from "../../lib/copy.ts";
+import { localePaths, type SiteLocale } from "../../lib/env.ts";
+
+export const getStaticPaths = localePaths;
+const lang = Astro.params.lang as SiteLocale;
+const rows = [
+  { what: lang === "tr" ? "GEO denetimi, şema, SSS" : "GEO audit, schema, FAQ", v: true, t: true },
+  { what: lang === "tr" ? "Harita ve dizin kayıtları" : "Map and directory listings", v: true, t: true },
+  { what: lang === "tr" ? "QR menü / katalog / klinik portalı" : "QR menu / catalog / clinic portal", v: true, t: true },
+  { what: lang === "tr" ? "Yorum sayfası ve İtibar Masası" : "Review page and Reputation Desk", v: true, t: true },
+  { what: lang === "tr" ? "Baskıya hazır stand ve kart tasarımları" : "Print-ready stand and card artwork", v: true, t: true },
+  { what: lang === "tr" ? "Stand kurulumu ve personel bilgilendirmesi" : "Stand installation and staff briefing", v: false, t: true },
+  { what: lang === "tr" ? "Fotoğraf, 360° tur, yol tarifi videosu" : "Photography, 360° tour, wayfinding video", v: false, t: true },
+];
+---
+<Base lang={lang} title={how.title[lang]} description={how.lead[lang]} path="/how-we-work/" crumbs={[{ name: how.title[lang], path: "/how-we-work/" }]}>
+  <section class="mx-auto max-w-5xl px-4 pt-14">
+    <h1 class="font-serif text-4xl font-semibold text-cobalt-900">{how.title[lang]}</h1>
+    <p class="mt-4 max-w-3xl text-xl text-ink">{how.lead[lang]}</p>
+    <ol class="mt-8 grid gap-3 md:grid-cols-4">
+      {how.steps.map((s, i) => <li class="card p-5"><span class="font-serif text-3xl text-terracotta-500">{i + 1}</span><p class="mt-2 text-sm text-ink">{s[lang]}</p></li>)}
+    </ol>
+  </section>
+  <section class="mx-auto mt-12 max-w-5xl px-4">
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="border-b border-line">
+          <tr><th class="p-4 text-start"></th>{models.map((m) => <th class="p-4 text-center font-serif text-lg text-cobalt-900">{m.name[lang]}</th>)}</tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {rows.map((r) => (
+            <tr>
+              <td class="p-4 text-ink">{r.what}</td>
+              <td class="p-4 text-center">{r.v ? <span class="text-ok" aria-label="yes">✓</span> : <span class="text-ink-soft" aria-label="no">—</span>}</td>
+              <td class="p-4 text-center">{r.t ? <span class="text-ok" aria-label="yes">✓</span> : <span class="text-ink-soft" aria-label="no">—</span>}</td>
+            </tr>
+          ))}
+          <tr><td class="p-4 font-semibold">{lang === "tr" ? "Fiyat" : "Pricing"}</td><td class="p-4 text-center" colspan="2">{lang === "tr" ? "Bize ulaşın" : "Contact us"}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="mx-auto mt-12 max-w-5xl px-4">
+    <h2 class="font-serif text-2xl font-semibold text-cobalt-900">{how.tiersTitle[lang]}</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-3">{tiers.map((t) => <div class="card p-5"><h3 class="font-semibold text-ink">{t.name[lang]}</h3><p class="mt-2 text-sm text-ink-soft">{t.what[lang]}</p></div>)}</div>
+  </section>
+</Base>

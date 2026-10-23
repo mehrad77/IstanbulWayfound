@@ -1,0 +1,20 @@
+{
+  "name": "@wayfound/schema",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@wayfound/core": "workspace:*",
+    "@wayfound/i18n": "workspace:*"
+  },
+  "devDependencies": {
+    "schema-dts": "2.1.0",
+    "@wayfound/db": "workspace:*"
+  }
+}

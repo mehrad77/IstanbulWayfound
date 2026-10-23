@@ -1,0 +1,22 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "wayfound-console",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    // API calls hit the Worker first and go to the API over a service binding, so the
+    // session cookie is first-party (workers.dev subdomains count as separate sites).
+    "run_worker_first": ["/api/*"]
+  },
+  "services": [{ "binding": "API", "service": "wayfound-api" }],
+  "vars": { "PUBLIC_ORIGIN": "http://localhost:8791" },
+  "env": {
+    "production": {
+      "name": "wayfound-console",
+      "routes": [{ "pattern": "app.wayfound.shab.boo", "custom_domain": true }],
+      "services": [{ "binding": "API", "service": "wayfound-api" }],
+      "vars": { "PUBLIC_ORIGIN": "https://go.wayfound.shab.boo" }
+    }
+  }
+}

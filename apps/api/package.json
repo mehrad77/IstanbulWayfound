@@ -1,0 +1,28 @@
+{
+  "name": "@wayfound/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8790 --inspector-port 9290",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "typecheck": "tsc -p .",
+    "db:migrate": "wrangler d1 migrations apply wayfound --local",
+    "db:seed": "pnpm --filter @wayfound/db seed:sql ../../.wrangler/seed.sql && wrangler d1 execute wayfound --local --file ../../.wrangler/seed.sql",
+    "deploy": "wrangler deploy --env production"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "0.9.1",
+    "@wayfound/core": "workspace:*",
+    "@wayfound/db": "workspace:*",
+    "@wayfound/i18n": "workspace:*",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.13",
+    "jose": "6.2.13",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261023.1",
+    "wrangler": "4.152.0"
+  }
+}

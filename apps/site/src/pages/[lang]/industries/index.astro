@@ -1,0 +1,23 @@
+---
+import Base from "../../../layouts/Base.astro";
+import { nav } from "../../../lib/copy.ts";
+import { localePaths, type SiteLocale } from "../../../lib/env.ts";
+import { industries } from "../../../lib/industries.ts";
+
+export const getStaticPaths = localePaths;
+const lang = Astro.params.lang as SiteLocale;
+const title = nav.industries[lang];
+---
+<Base lang={lang} title={title} description={lang === "tr" ? "Klinikler, restoran ve kafeler, butik ve showroomlar için." : "For clinics, restaurants and cafés, boutiques and showrooms."} path="/industries/" crumbs={[{ name: title, path: "/industries/" }]}>
+  <section class="mx-auto max-w-5xl px-4 pt-14">
+    <h1 class="font-serif text-4xl font-semibold text-cobalt-900">{title}</h1>
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      {industries.map((i) => (
+        <a href={`/${lang}/industries/${i.slug}/`} class="card block p-6 hover:border-cobalt-300">
+          <h2 class="font-serif text-2xl font-semibold text-ink">{i.title[lang]}</h2>
+          <p class="mt-2 text-sm text-ink-soft">{i.lead[lang]}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

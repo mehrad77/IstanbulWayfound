@@ -1,0 +1,13 @@
+{
+  "name": "@wayfound/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./tokens": "./tokens.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p ."
+  }
+}

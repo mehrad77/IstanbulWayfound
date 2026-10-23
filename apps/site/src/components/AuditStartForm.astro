@@ -1,0 +1,29 @@
+---
+import type { SiteLocale } from "../lib/env.ts";
+
+interface Props {
+  lang: SiteLocale;
+}
+const { lang } = Astro.props;
+const tr = lang === "tr";
+---
+<form method="get" action={`/${lang}/audit/`} class="card grid gap-3 p-5 sm:grid-cols-2" data-audit-start>
+  <label class="grid gap-1 text-sm font-medium sm:col-span-2">
+    {tr ? "İşletmenizin adı" : "Your business name"}
+    <input name="name" required class="field" placeholder={tr ? "örn. Café Lale" : "e.g. Café Lale"} />
+  </label>
+  <label class="grid gap-1 text-sm font-medium">
+    {tr ? "Sektör" : "Type of business"}
+    <select name="vertical" class="field">
+      <option value="dining">{tr ? "Restoran / kafe" : "Restaurant / café"}</option>
+      <option value="clinic">{tr ? "Klinik" : "Clinic"}</option>
+      <option value="retail">{tr ? "Butik / showroom" : "Boutique / showroom"}</option>
+    </select>
+  </label>
+  <label class="grid gap-1 text-sm font-medium">
+    {tr ? "Semt" : "District"}
+    <input name="district" required class="field" placeholder="Şişli, Osmanbey, Karaköy…" />
+  </label>
+  <button class="btn-primary sm:col-span-2" type="submit">{tr ? "Ücretsiz denetimi başlat" : "Run the free audit"} →</button>
+  <p class="text-xs text-ink-soft sm:col-span-2">{tr ? "Yaklaşık bir dakika sürer. Bu demoda yapay zekâ yanıtları örnek veridir." : "Takes about a minute. In this demo the AI answers are sample data."}</p>
+</form>

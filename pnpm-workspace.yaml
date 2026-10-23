@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+
+allowBuilds:
+  esbuild: true
+  workerd: true
+  sharp: true
+  "@tailwindcss/oxide": true
+  "@parcel/watcher": true
+
+minimumReleaseAgeExclude:
+  - "@cloudflare/workers-types@5.20261023.1"
+  - "@cloudflare/vite-plugin@1.65.0"

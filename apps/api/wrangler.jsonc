@@ -1,0 +1,64 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "wayfound-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wayfound",
+      // Placeholder until a remote database is created (only with the owner's OK).
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "wayfound-media" }],
+  "kv_namespaces": [{ "binding": "KV", "id": "00000000000000000000000000000000" }],
+  "triggers": { "crons": ["15 3 * * *"] },
+  "vars": {
+    "ENVIRONMENT": "development",
+    "DEMO_MODE": "true",
+    "ALLOW_PRIVATE_FETCH": "true",
+    "SITE_ORIGIN": "http://localhost:4321",
+    "PUBLIC_ORIGIN": "http://localhost:8791",
+    "CONSOLE_ORIGIN": "http://localhost:5173",
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  },
+  "env": {
+    "production": {
+      "name": "wayfound-api",
+      // The account is on Workers Free (5 crons, all in use): FX refreshes on demand instead,
+      // because the KV cache expires daily. Restore the cron on Workers Paid.
+      "triggers": { "crons": [] },
+      "routes": [{ "pattern": "api.wayfound.shab.boo", "custom_domain": true }],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "wayfound",
+          "database_id": "10c7b54a-b97f-4f5f-be36-f1e310b2aa06",
+          "migrations_dir": "../../packages/db/migrations"
+        }
+      ],
+      "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "wayfound-media" }],
+      "kv_namespaces": [{ "binding": "KV", "id": "02c6ad2853b943baa8d65cfc22c50fec" }],
+      // Per-IP limits on the public write endpoints (audits fetch third-party sites).
+      "ratelimits": [
+        { "name": "PUBLIC_LIMIT", "namespace_id": "1001", "simple": { "limit": 20, "period": 60 } }
+      ],
+      "vars": {
+        "ENVIRONMENT": "production",
+        "DEMO_MODE": "true",
+        "ALLOW_PRIVATE_FETCH": "false",
+        "SITE_ORIGIN": "https://wayfound.shab.boo",
+        "PUBLIC_ORIGIN": "https://go.wayfound.shab.boo",
+        "CONSOLE_ORIGIN": "https://app.wayfound.shab.boo",
+        "ACCESS_TEAM_DOMAIN": "",
+        "ACCESS_AUD": ""
+      }
+      // Secret (set by CI): AGENCY_DEMO_CODE, the passcode for the agency demo sign-in.
+    }
+  }
+}

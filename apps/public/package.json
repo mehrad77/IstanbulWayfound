@@ -1,0 +1,26 @@
+{
+  "name": "@wayfound/public",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "css": "tailwindcss -i src/styles.css -o assets/app.css --minify",
+    "css:watch": "tailwindcss -i src/styles.css -o assets/app.css --watch",
+    "dev": "pnpm css && wrangler dev --port 8791 --inspector-port 9291",
+    "build": "pnpm css && wrangler deploy --dry-run --outdir dist",
+    "typecheck": "tsc -p .",
+    "deploy": "pnpm css && wrangler deploy --env production"
+  },
+  "dependencies": {
+    "@wayfound/core": "workspace:*",
+    "@wayfound/i18n": "workspace:*",
+    "@wayfound/schema": "workspace:*",
+    "hono": "4.13.13"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261023.1",
+    "@tailwindcss/cli": "4.3.3",
+    "tailwindcss": "4.3.3",
+    "wrangler": "4.152.0"
+  }
+}

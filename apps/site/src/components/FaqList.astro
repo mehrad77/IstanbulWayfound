@@ -1,0 +1,22 @@
+---
+import type { Faq } from "../lib/content-types.ts";
+import type { SiteLocale } from "../lib/env.ts";
+
+interface Props {
+  faqs: Faq[];
+  lang: SiteLocale;
+  title?: string;
+}
+const { faqs, lang, title } = Astro.props;
+---
+<section class="mx-auto max-w-3xl px-4" aria-labelledby="faq-title">
+  {title ? <h2 id="faq-title" class="font-serif text-3xl font-semibold text-cobalt-900">{title}</h2> : null}
+  <div class="card mt-6 divide-y divide-line">
+    {faqs.map((f) => (
+      <div class="p-5">
+        <h3 class="font-semibold text-ink">{f.q[lang]}</h3>
+        <p class="prose-answer mt-2">{f.a[lang]}</p>
+      </div>
+    ))}
+  </div>
+</section>
